@@ -31,6 +31,11 @@ const router = createRouter({
       component: () => import("../views/TrashPage.vue"),
     },
     {
+      path: routes.GROUPS,
+      name: "goups",
+      component: () => import("../views/GroupPage.vue"),
+    },
+    {
       path: "/details/:id",
       name: "details",
       component: () => import("../views/DetailPage.vue"),
