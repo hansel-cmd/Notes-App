@@ -1,5 +1,5 @@
 <template>
-    <div class="w-[250px] border">
+    <div class="sticky top-0 border-t-[1px]">
         <div class="border-b h-[64px]">
             <router-link to="/">
                 <img :src="logo" alt="logo" class="rounded-full h-full">
