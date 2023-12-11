@@ -1,5 +1,6 @@
 export const ALL = "/";
 export const CREATE = "/create";
+export const EDIT = "/edit/:id";
 export const SETTINGS = "/settings";
 export const FAVORITES = "/favorites";
 export const GROUPS = "/groups";
@@ -46,3 +47,10 @@ export const SECONDARY_LINKS = [
     iconFilled: "bi bi-gear-fill",
   },
 ];
+
+export const OTHER_LINKS = [
+  {
+    path: EDIT,
+    name: "Edit Notes"
+  }
+]

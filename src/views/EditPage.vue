@@ -86,24 +86,18 @@
                         class="p-3 border-[1px] bg-transparent rounded min-h-[250px]"></textarea>
                 </div>
 
-                <div class="my-4">
-                    <input id="favorite" v-model="data.favorite" type="checkbox">
-                    <label for="favorite" class="ms-4">Mark as Favorite</label>
-                </div>
-
-                <hr class="mb-4">
-
-                <button type="submit" class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full">Create Note</button>
+                <button type="submit" class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full">Update
+                    Notes</button>
             </form>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
 import { AVAILABLE_BANNERS } from "@/lib/banners";
 import { AVAILABLE_GROUPS } from "@/lib/groups";
-import { onBeforeRouteLeave } from 'vue-router';
+import { onMounted, onUnmounted, ref } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 
 const data = ref({
     banner: '',
@@ -111,41 +105,12 @@ const data = ref({
     group: '',
     newGroup: '',
     content: '',
-    favorite: false,
-})
+});
 
 const enableNewGroupInput = ref(false);
 const isGroupOptionOpen = ref(false);
 const isBannerOptionOpen = ref(false);
 const dropdownRef = ref(null);
-
-onBeforeRouteLeave((to, from, next) => {
-    // return true;
-    if (data.value.banner ||
-        data.value.title ||
-        data.value.group ||
-        data.value.newGroup ||
-        data.value.content || 
-        data.value.favorite) {
-
-        const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
-        if (x) return next();
-        else return;
-    }
-    return next();
-})
-
-const preventNav = (event) => {
-    if (data.value.banner ||
-        data.value.title ||
-        data.value.group ||
-        data.value.newGroup ||
-        data.value.content) {
-        event.preventDefault();
-        event.returnValue = '';
-    }
-};
-
 
 const toggleDropdown = (_ref = 'select', value) => {
     if (_ref === 'groupNotes') {
@@ -186,6 +151,12 @@ const closeDropdownOnOutsideClick = (event) => {
     }
 };
 
+onBeforeRouteLeave((to, from, next) => {
+    const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
+    if (x) return next();
+    else return;
+})
+
 onMounted(() => {
     document.addEventListener('click', closeDropdownOnOutsideClick);
 });
@@ -193,19 +164,5 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', closeDropdownOnOutsideClick);
 });
-
-onBeforeMount(() => {
-    window.addEventListener('beforeunload', preventNav);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('beforeunload', preventNav);
-});
-
-
-const handleSubmit = () => {
-    console.log('submitting...', data.value);
-}
-
 
 </script>

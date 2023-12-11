@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { PRIMARY_LINKS, SECONDARY_LINKS } from "@/router/routes"
+import { PRIMARY_LINKS, SECONDARY_LINKS, OTHER_LINKS } from "@/router/routes"
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -16,8 +16,12 @@ const pagetitle = ref('');
 const router = useRoute();
 
 const setPageTitle = () => {
-    const LINKS = [...PRIMARY_LINKS, ...SECONDARY_LINKS];
-    const currentLink = LINKS.find(link => router.path === link.path);
+
+    const LINKS = [...PRIMARY_LINKS, ...SECONDARY_LINKS, ...OTHER_LINKS];
+    const currentLink = LINKS.find(link => {
+        const regex = new RegExp(`^${link.path.replace('/:id', '/\\d+')}$`);
+        return regex.test(router.path);
+    });
     if (currentLink) {
         pagetitle.value = currentLink.name;
     }

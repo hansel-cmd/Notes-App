@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
+import CreatePageVue from "../views/CreatePage.vue";
 import * as routes from "./routes"
 
 const router = createRouter({
@@ -13,7 +14,12 @@ const router = createRouter({
     {
       path: routes.CREATE,
       name: "create",
-      component: () => import("../views/CreatePage.vue"),
+      component: CreatePageVue,
+    },
+    {
+      path: routes.EDIT,
+      name: "edit",
+      component: () => import("../views/EditPage.vue"),
     },
     {
       path: routes.SETTINGS,
