@@ -7,7 +7,7 @@ export const TRASH = "/trash";
 export const PRIMARY_LINKS = [
   {
     path: ALL,
-    name: "All",
+    name: "Home",
     icon: "bi bi-house-door",
     iconFilled: "bi bi-house-door-fill",
   },
