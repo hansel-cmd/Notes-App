@@ -10,7 +10,7 @@
                 <div v-if="isOpen"
                     class="origin-top-right absolute mt-2 w-44 shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                     <button class="py-1 hover:bg-gray-100 hover:text-gray-900 w-full text-start">
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 ">Open Note</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 ">Edit Note</a>
                     </button>
 
                     <button class="py-1 hover:bg-gray-100 hover:text-gray-900 w-full text-start">
