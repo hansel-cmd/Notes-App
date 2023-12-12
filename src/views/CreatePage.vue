@@ -145,14 +145,7 @@ const isBannerOptionOpen = ref(false);
 const dropdownRef = ref(null);
 
 onBeforeRouteLeave((to, from, next) => {
-    // return true;
-    if (data.value.banner ||
-        data.value.title ||
-        data.value.group ||
-        data.value.newGroup ||
-        data.value.content ||
-        data.value.favorite) {
-
+    if ($v.value.$anyDirty) {
         const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
         if (x) return next();
         else return;
@@ -161,11 +154,7 @@ onBeforeRouteLeave((to, from, next) => {
 })
 
 const preventNav = (event) => {
-    if (data.value.banner ||
-        data.value.title ||
-        data.value.group ||
-        data.value.newGroup ||
-        data.value.content) {
+    if ($v.value.$anyDirty) {
         event.preventDefault();
         event.returnValue = '';
     }
@@ -238,16 +227,21 @@ const handleSubmit = async () => {
         title: data.value.title,
         group: data.value.group || data.value.newGroup,
         content: data.value.content,
-        favoite: data.value.favorite,
+        favorite: data.value.favorite,
         date: new Date().toLocaleDateString()
     }
 
     const currentNotes = localStorage.getItem('notes', null);
     if (!currentNotes) {
-        localStorage.setItem('notes', JSON.stringify([validatedData]));
+        localStorage.setItem('notes',
+            JSON.stringify([{ id: 1, ...validatedData }]));
     } else {
         const current = JSON.parse(currentNotes);
-        current.push(validatedData);
+        const maxId = Math.max(...current.map(note => note.id)) + 1;
+        current.push({
+            id: maxId,
+            ...validatedData
+        })
         localStorage.setItem('notes', JSON.stringify(current));
     }
 
