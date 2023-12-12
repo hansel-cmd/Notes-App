@@ -1,9 +1,3 @@
-<script setup>
-import SideNavigation from './components/SideNavigation.vue';
-import PageHeader from './components/PageHeader.vue';
-import SearchBox from './components/SearchBox.vue';
-</script>
-
 <template>
   <div class="container flex border-x-[1px] w-[850px] mx-auto min-h-screen text-white">
     <div class="w-[250px] border-e-[1px]">
@@ -12,11 +6,25 @@ import SearchBox from './components/SearchBox.vue';
     <div class="w-[600px]">
       <div class="sticky top-0 bg-black z-20">
         <PageHeader></PageHeader>
-        <SearchBox />
+        <SearchBox @handleSearch="handleSearch"/>
       </div>
-      <RouterView />
+      <RouterView :qs="queryString"/>
     </div>
   </div>
 </template>
+
+<script setup>
+import SideNavigation from './components/SideNavigation.vue';
+import PageHeader from './components/PageHeader.vue';
+import SearchBox from './components/SearchBox.vue';
+import { ref } from 'vue';
+
+const queryString = ref('')
+
+const handleSearch = (qs) => {
+  queryString.value = qs;
+}
+
+</script>
 
 <style></style>

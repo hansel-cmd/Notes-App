@@ -16,12 +16,27 @@ import NotesContainer from '@/components/NotesContainer.vue';
 import Toast from "@/components/ToastComponent.vue";
 import NothingHere from '@/components/NothingHere.vue';
 import { toast, resetToast } from "@/lib/toast";
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-const notes = ref(JSON.parse(localStorage.getItem('notes')) || []);
+const props = defineProps(['qs']);
+
+watch(props, () => notes.value = getNotes())
+
+const getNotes = () => {
+    const n = JSON.parse(localStorage.getItem('notes')) || [];
+    return n.filter(note => {
+        return note.title.toLowerCase().includes(props.qs.toLowerCase()) ||
+            note.content.toLowerCase().includes(props.qs.toLowerCase()) ||
+            note.group.toLowerCase().includes(props.qs.toLowerCase())
+    });
+}
+
+const notes = ref(getNotes());
 
 const handleFavorite = (id) => {
-    const updatedAllNotes = notes.value.map(note => {
+    
+    const allNotes = JSON.parse(localStorage.getItem('notes')) || [];
+    const updatedAllNotes = allNotes.map(note => {
         if (note.id === id) {
             if (note.favorite)
                 toast.value.message = 'Removed from favorites!';
@@ -37,6 +52,7 @@ const handleFavorite = (id) => {
     })
 
     localStorage.setItem('notes', JSON.stringify(updatedAllNotes));
+    notes.value = getNotes();
 
     toast.value.show = true;
     resetToast();

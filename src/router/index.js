@@ -10,6 +10,7 @@ const router = createRouter({
     {
       path: routes.ALL,
       name: "home",
+      props: true,
       component: HomePage,
       beforeEnter(to, from, next) {
         document.title = 'My Notes App | Home'
@@ -37,6 +38,7 @@ const router = createRouter({
     {
       path: routes.FAVORITES,
       name: "favorites",
+      props: true,
       component: () => import("../views/FavoritePage.vue"),
       beforeEnter(to, from, next) {
         document.title = 'My Notes App | Favorites'
@@ -46,6 +48,7 @@ const router = createRouter({
     {
       path: routes.GROUPS,
       name: "groups",
+      props: true,
       component: () => import("../views/GroupPage.vue"),
       beforeEnter(to, from, next) {
         document.title = 'My Notes App | Group Notes'
