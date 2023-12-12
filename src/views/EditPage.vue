@@ -98,7 +98,7 @@
 
                 <button type="submit"
                     class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full disabled:cursor-not-allowed disabled:bg-slate-500"
-                    :disabled="$v.$invalid && $v.$anyDirty">Create
+                    :disabled="$v.$invalid && $v.$anyDirty">Update
                     Note</button>
             </form>
         </div>
@@ -218,6 +218,7 @@ const handleSubmit = async () => {
     if (!isFormCorrect) return;
 
     const validatedData = {
+        id: data.value.id,
         banner: data.value.banner,
         title: data.value.title,
         group: data.value.group || data.value.newGroup,
