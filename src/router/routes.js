@@ -34,18 +34,6 @@ export const SECONDARY_LINKS = [
     icon: "bi bi-collection",
     iconFilled: "bi bi-collection-fill",
   },
-  {
-    path: TRASH,
-    name: "Trash Bin",
-    icon: "bi bi-trash3",
-    iconFilled: "bi bi-trash3-fill",
-  },
-  {
-    path: SETTINGS,
-    name: "Settings",
-    icon: "bi bi-gear",
-    iconFilled: "bi bi-gear-fill",
-  },
 ];
 
 export const OTHER_LINKS = [

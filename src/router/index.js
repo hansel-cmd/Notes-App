@@ -11,46 +11,64 @@ const router = createRouter({
       path: routes.ALL,
       name: "home",
       component: HomePage,
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Home'
+        return next();
+      }
     },
     {
       path: routes.CREATE,
       name: "create",
       component: CreatePageVue,
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Create'
+        return next();
+      }
     },
     {
       path: routes.EDIT,
       name: "edit",
       component: () => import("../views/EditPage.vue"),
-    },
-    {
-      path: routes.SETTINGS,
-      name: "settings",
-      component: () => import("../views/SettingsPage.vue"),
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Edit'
+        return next();
+      }
     },
     {
       path: routes.FAVORITES,
       name: "favorites",
       component: () => import("../views/FavoritePage.vue"),
-    },
-    {
-      path: routes.TRASH,
-      name: "trash",
-      component: () => import("../views/TrashPage.vue"),
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Favorites'
+        return next();
+      }
     },
     {
       path: routes.GROUPS,
-      name: "goups",
+      name: "groups",
       component: () => import("../views/GroupPage.vue"),
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Group Notes'
+        return next();
+      }
     },
     {
       path: "/details/:id",
       name: "details",
       component: () => import("../views/DetailPage.vue"),
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Note Details'
+        return next();
+      }
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: NotFound
+      component: NotFound,
+      beforeEnter(to, from, next) {
+        document.title = 'My Notes App | Not Found'
+        return next();
+      }
     }
   ],
 });

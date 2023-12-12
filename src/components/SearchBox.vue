@@ -3,11 +3,11 @@
         <div className="flex items-center border-[1px] px-2 py-2 grow">
             <input type="text" @keyup.enter="handleSearch"
                 className="w-full ms-2 bg-transparent focus:outline-none dark:text-white border-0 border-transparent focus:ring-0" />
-            <button className="me-2 outline-none" onClick={clearQueryString}>
+            <div className="me-2 outline-none">
                 <span title="Search">
-                    <i className="bi bi-search text-gray-400 text-lg block cursor-pointer hover:text-gray-800"></i>
+                    <i className="bi bi-search text-gray-400 text-lg block"></i>
                 </span>
-            </button>
+            </div>
         </div>
     </div>
 </template>

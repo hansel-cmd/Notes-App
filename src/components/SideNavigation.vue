@@ -1,8 +1,11 @@
 <template>
     <div class="sticky top-0 border-t-[1px]">
         <div class="border-b h-[64px]">
-            <router-link to="/">
-                <img :src="logo" alt="logo" class="rounded-full h-full">
+            <router-link to="/" class="items-center flex">
+                <img :src="logo" alt="logo" class="inline-block rounded-full h-[64px]">
+                <span class="text-xl ms-2">
+                    MY Notes App
+                </span>
             </router-link>
         </div>
         <ul class="p-4">
