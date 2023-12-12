@@ -52,8 +52,7 @@
 
                             <div v-if="isGroupOptionOpen"
                                 class="origin-top-right absolute mt-2 w-full shadow-lg bg-black border border-gray-100 ring-white ring-opacity-5">
-                                <button @click="handleSelectGroup(group.name)" v-for="group in AVAILABLE_GROUPS"
-                                    :key="group.id"
+                                <button @click="handleSelectGroup(group.name)" v-for="group in groups" :key="group.id"
                                     class="flex justify-between items-center py-1 hover:bg-gray-800 hover:text-gray-900 w-full text-start">
                                     <a href="#" class="block px-4 py-2 text-sm text-white">
                                         {{ group.name }}
@@ -109,12 +108,14 @@
 <script setup>
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
 import { AVAILABLE_BANNERS } from "@/lib/banners";
-import { AVAILABLE_GROUPS } from "@/lib/groups";
 import { onBeforeRouteLeave } from 'vue-router';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import ValidationMessage from "@/components/ValidationMessage.vue";
 import Toast from "@/components/ToastComponent.vue";
+
+const initialGroups = JSON.parse(localStorage.getItem('groups')) || [];
+const groups = ref([...initialGroups]);
 
 const toast = ref({
     show: false,
@@ -218,7 +219,7 @@ onBeforeUnmount(() => {
 
 
 const handleSubmit = async () => {
-    console.log('submitting...', data.value);
+
     const isFormCorrect = await $v.value.$validate()
     if (!isFormCorrect) return;
 
@@ -231,13 +232,39 @@ const handleSubmit = async () => {
         date: new Date().toLocaleDateString()
     }
 
-    const currentNotes = localStorage.getItem('notes', null);
+    if (data.value.newGroup !== '') {
+        let gs = localStorage.getItem('groups');
+
+        // first group data
+        if (!gs) {
+            let newGroups = [{ id: 1, name: data.value.newGroup }];
+            localStorage.setItem('groups', JSON.stringify(newGroups))
+            groups.value = [...newGroups];
+        } else {
+
+            gs = JSON.parse(localStorage.getItem('groups'))
+            const maxId = gs.length > 0
+                ? Math.max(...gs.map(group => group.id)) + 1
+                : 1;
+
+            let newGroups = [...gs, { id: maxId, name: data.value.newGroup }];
+            localStorage.setItem('groups',
+                JSON.stringify([...newGroups]))
+
+            groups.value = [...newGroups];
+        }
+
+    }
+
+    const currentNotes = localStorage.getItem('notes');
     if (!currentNotes) {
         localStorage.setItem('notes',
             JSON.stringify([{ id: 1, ...validatedData }]));
     } else {
         const current = JSON.parse(currentNotes);
-        const maxId = Math.max(...current.map(note => note.id)) + 1;
+        const maxId = current.length > 0
+            ? Math.max(...current.map(note => note.id)) + 1
+            : 1;
         current.push({
             id: maxId,
             ...validatedData

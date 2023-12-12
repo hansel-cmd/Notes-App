@@ -3,8 +3,8 @@
         <div class="w-100 px-10">
             <form @submit.prevent="handleSubmit">
                 <div class="flex flex-col my-4">
-                    <label class="mb-2">Notes Banner</label>
-                    <div class="relative inline-block text-left z-20">
+                    <label class="mb-2">Notes Banner *</label>
+                    <div class="relative inline-block text-left z-10" @click="$v.banner.$touch">
                         <span id="banner" @click="toggleDropdown('banner', 'banner')" type="button"
                             class="flex items-center justify-between border-[1px] bg-transparent rounded p-2 w-full h-full cursor-pointer">
                             {{ data.banner || 'Select Notes Banner' }}
@@ -28,11 +28,13 @@
                             </button>
                         </div>
                     </div>
+                    <ValidationMessage :model="$v.banner"></ValidationMessage>
                 </div>
                 <div class="flex flex-col my-4">
-                    <label for="title" class="mb-2">Notes Title</label>
-                    <input id="title" v-model="data.title" name="title" type="text"
+                    <label for="title" class="mb-2">Notes Title *</label>
+                    <input id="title" v-model="data.title" @blur="$v.title.$touch" name="title" type="text"
                         class="p-2 border-[1px] bg-transparent rounded">
+                    <ValidationMessage :model="$v.title"></ValidationMessage>
                 </div>
 
                 <div class="flex gap-4">
@@ -50,7 +52,7 @@
 
                             <div v-if="isGroupOptionOpen"
                                 class="origin-top-right absolute mt-2 w-full shadow-lg bg-black border border-gray-100 ring-white ring-opacity-5">
-                                <button @click="handleSelectGroup(group.name)" v-for="group in AVAILABLE_GROUPS"
+                                <button @click="handleSelectGroup(group.name)" v-for="group in groups"
                                     :key="group.id"
                                     class="flex justify-between items-center py-1 hover:bg-gray-800 hover:text-gray-900 w-full text-start">
                                     <a href="#" class="block px-4 py-2 text-sm text-white">
@@ -81,31 +83,58 @@
                 </div>
 
                 <div class="flex flex-col my-4">
-                    <label for="content" class="mb-2">Notes Content</label>
-                    <textarea v-model="data.content" name="content" id="content"
+                    <label for="content" class="mb-2">Notes Content *</label>
+                    <textarea v-model="data.content" @blur="$v.content.$touch" name="content" id="content"
                         class="p-3 border-[1px] bg-transparent rounded min-h-[250px]"></textarea>
+                    <ValidationMessage :model="$v.content"></ValidationMessage>
                 </div>
 
-                <button type="submit" class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full">Update
-                    Notes</button>
+                <div class="my-4">
+                    <input id="favorite" v-model="data.favorite" type="checkbox">
+                    <label for="favorite" class="ms-4">Mark as Favorite</label>
+                </div>
+
+                <hr class="mb-4">
+
+                <button type="submit"
+                    class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full disabled:cursor-not-allowed disabled:bg-slate-500"
+                    :disabled="$v.$invalid && $v.$anyDirty">Create
+                    Note</button>
             </form>
         </div>
+        <Toast :shouldShow="toast.show" :message="toast.message" />
     </div>
 </template>
 
 <script setup>
 import { AVAILABLE_BANNERS } from "@/lib/banners";
-import { AVAILABLE_GROUPS } from "@/lib/groups";
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
+import { useVuelidate } from '@vuelidate/core';
+import { required, minLength } from '@vuelidate/validators';
+import ValidationMessage from "@/components/ValidationMessage.vue";
+import Toast from "@/components/ToastComponent.vue";
+import { useRoute } from "vue-router";
+import { toast, resetToast } from "@/lib/toast";
 
-const data = ref({
-    banner: '',
-    title: '',
-    group: '',
-    newGroup: '',
-    content: '',
-});
+const route = useRoute();
+
+const initialGroups = JSON.parse(localStorage.getItem('groups')) || [];
+const groups = ref([...initialGroups]);
+
+const allNotes = JSON.parse(localStorage.getItem('notes', []))
+const initialData = ref(allNotes.find(
+    note => note.id === Number(route.params?.id)) || null)
+const data = ref({ ...initialData.value, newGroup: '' });
+
+const rules = computed(() => ({
+    banner: { required },
+    title: { required, minLength: minLength(4) },
+    content: { required },
+}));
+
+const $v = useVuelidate(rules, data);
+
 
 const enableNewGroupInput = ref(false);
 const isGroupOptionOpen = ref(false);
@@ -152,10 +181,20 @@ const closeDropdownOnOutsideClick = (event) => {
 };
 
 onBeforeRouteLeave((to, from, next) => {
-    const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
-    if (x) return next();
-    else return;
-})
+    if ($v.value.$anyDirty) {
+        const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
+        if (x) return next();
+        else return;
+    }
+    return next();
+});
+
+const preventNav = (event) => {
+    if ($v.value.$anyDirty) {
+        event.preventDefault();
+        event.returnValue = '';
+    }
+};
 
 onMounted(() => {
     document.addEventListener('click', closeDropdownOnOutsideClick);
@@ -164,5 +203,63 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', closeDropdownOnOutsideClick);
 });
+
+onBeforeMount(() => {
+    window.addEventListener('beforeunload', preventNav);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', preventNav);
+});
+
+const handleSubmit = async () => {
+
+    const isFormCorrect = await $v.value.$validate()
+    if (!isFormCorrect) return;
+
+    const validatedData = {
+        banner: data.value.banner,
+        title: data.value.title,
+        group: data.value.group || data.value.newGroup,
+        content: data.value.content,
+        favorite: data.value.favorite,
+        date: new Date().toLocaleDateString()
+    }
+
+    if (data.value.newGroup !== '') {
+        let gs = localStorage.getItem('groups');
+
+        // first group data
+        if (!gs) {
+            let newGroups = [{ id: 1, name: data.value.newGroup }];
+            localStorage.setItem('groups', JSON.stringify(newGroups))
+            groups.value = [...newGroups];
+        } else {
+
+            gs = JSON.parse(localStorage.getItem('groups'))
+            const maxId = gs.length > 0
+                ? Math.max(...gs.map(group => group.id)) + 1
+                : 1;
+
+            let newGroups = [...gs, { id: maxId, name: data.value.newGroup }];
+            localStorage.setItem('groups',
+                JSON.stringify([...newGroups]))
+
+            groups.value = [...newGroups];
+        }
+    }
+
+    const updatedNotes = allNotes.map(
+        note => note.id === validatedData.id ? validatedData : note
+    )
+
+    localStorage.setItem('notes', JSON.stringify(updatedNotes));
+    toast.value.show = true;
+    toast.value.message = 'Updated Successfully!';
+    resetToast();
+    nextTick(() => {
+        $v.value.$reset();
+    })
+}
 
 </script>

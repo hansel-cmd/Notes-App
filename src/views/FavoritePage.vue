@@ -12,8 +12,8 @@ import Toast from "@/components/ToastComponent.vue";
 import { toast, resetToast } from "@/lib/toast";
 import { ref } from 'vue';
 
-const favoriteNotes = ref(JSON.parse(localStorage.getItem('notes', []))
-    .filter(note => note.favorite))
+const favoriteNotes = ref((JSON.parse(localStorage.getItem('notes')) || [])
+        .filter(note => note.favorite))
 
 
 const handleFavorite = (id) => {

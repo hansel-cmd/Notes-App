@@ -11,7 +11,7 @@ import Toast from "@/components/ToastComponent.vue";
 import { toast, resetToast } from "@/lib/toast";
 import { ref } from 'vue';
 
-const notes = ref(JSON.parse(localStorage.getItem('notes', [])));
+const notes = ref(JSON.parse(localStorage.getItem('notes')) || []);
 
 const handleFavorite = (id) => {
     const updatedAllNotes = notes.value.map(note => {
