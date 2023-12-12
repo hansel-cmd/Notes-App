@@ -24,7 +24,8 @@
 
                     <button class="py-1 hover:bg-gray-100 hover:text-gray-900 w-full text-start">
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 ">
-                            <i class="bi bi-star me-3"></i>Mark as Favorite</a>
+                            <i class="bi bi-star-fill me-3"></i>Mark as {{ combinedNote.favorite ? 'Favorite' : 'Unfavorite'
+                            }}</a>
                     </button>
                 </div>
             </div>
@@ -52,7 +53,6 @@ const combinedNote = computed(() => {
     }
     return note;
 })
-console.log(combinedNote.value)
 
 const isOpen = ref(false);
 const dropdownRef = ref(null);

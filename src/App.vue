@@ -10,7 +10,7 @@ import SearchBox from './components/SearchBox.vue';
       <SideNavigation />
     </div>
     <div class="w-[600px]">
-      <div class="sticky top-0 bg-black z-10">
+      <div class="sticky top-0 bg-black z-20">
         <PageHeader></PageHeader>
         <SearchBox />
       </div>

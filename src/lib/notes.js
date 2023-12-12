@@ -7,7 +7,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'aespa!',
         group: 'K-Pop Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 2,
@@ -15,7 +16,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'I love myself',
         group: 'Personal Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
     {
         id: 3,
@@ -23,7 +25,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'DRAMA!',
         group: 'K-Pop Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
     {
         id: 4,
@@ -31,7 +34,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Algebra',
         group: 'School Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 5,
@@ -39,7 +43,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'aespaicy',
         group: 'K-Pop Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 6,
@@ -47,7 +52,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Mathematics',
         group: 'School Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
     {
         id: 7,
@@ -55,7 +61,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'You and I',
         group: 'Personal Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 8,
@@ -63,7 +70,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Me, Myself, and I',
         group: 'Personal Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
     {
         id: 9,
@@ -71,7 +79,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Science is good.',
         group: 'School Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 10,
@@ -79,7 +88,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Katarina and Winter',
         group: 'K-Pop Stuff',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: true,
     },
     {
         id: 11,
@@ -87,7 +97,8 @@ export const AVAILABLE_NOTES = ref([
         title: 'Items to buy.',
         group: 'Others',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
     {
         id: 12,
@@ -95,6 +106,7 @@ export const AVAILABLE_NOTES = ref([
         title: 'Meat or Beef?',
         group: 'Others',
         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ultrices euismod neque, tempor egestas urna pretium a. Sed ut purus non nisl ornare imperdiet ut nec metus. Duis sollicitudin faucibus lacus, vel vehicula metus dapibus sit amet. Proin quis molestie nibh, vel volutpat leo. Aliquam viverra ipsum at fermentum dapibus.',
-        date: '08/23/2023'
+        date: '08/23/2023',
+        favorite: false,
     },
 ])

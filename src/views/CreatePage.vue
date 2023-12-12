@@ -3,8 +3,8 @@
         <div class="w-100 px-10">
             <form @submit.prevent="handleSubmit">
                 <div class="flex flex-col my-4">
-                    <label class="mb-2">Notes Banner</label>
-                    <div class="relative inline-block text-left z-20">
+                    <label class="mb-2">Notes Banner *</label>
+                    <div class="relative inline-block text-left z-10" @click="$v.banner.$touch">
                         <span id="banner" @click="toggleDropdown('banner', 'banner')" type="button"
                             class="flex items-center justify-between border-[1px] bg-transparent rounded p-2 w-full h-full cursor-pointer">
                             {{ data.banner || 'Select Notes Banner' }}
@@ -28,11 +28,13 @@
                             </button>
                         </div>
                     </div>
+                    <ValidationMessage :model="$v.banner"></ValidationMessage>
                 </div>
                 <div class="flex flex-col my-4">
-                    <label for="title" class="mb-2">Notes Title</label>
-                    <input id="title" v-model="data.title" name="title" type="text"
+                    <label for="title" class="mb-2">Notes Title *</label>
+                    <input id="title" v-model="data.title" @blur="$v.title.$touch" name="title" type="text"
                         class="p-2 border-[1px] bg-transparent rounded">
+                    <ValidationMessage :model="$v.title"></ValidationMessage>
                 </div>
 
                 <div class="flex gap-4">
@@ -81,9 +83,10 @@
                 </div>
 
                 <div class="flex flex-col my-4">
-                    <label for="content" class="mb-2">Notes Content</label>
-                    <textarea v-model="data.content" name="content" id="content"
+                    <label for="content" class="mb-2">Notes Content *</label>
+                    <textarea v-model="data.content" @blur="$v.content.$touch" name="content" id="content"
                         class="p-3 border-[1px] bg-transparent rounded min-h-[250px]"></textarea>
+                    <ValidationMessage :model="$v.content"></ValidationMessage>
                 </div>
 
                 <div class="my-4">
@@ -93,26 +96,48 @@
 
                 <hr class="mb-4">
 
-                <button type="submit" class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full">Create Note</button>
+                <button type="submit"
+                    class="bg-slate-800 hover:bg-slate-700 p-3 px-5 rounded-full w-full disabled:cursor-not-allowed disabled:bg-slate-500"
+                    :disabled="$v.$invalid && $v.$anyDirty">Create
+                    Note</button>
             </form>
         </div>
+        <Toast :shouldShow="toast.show" :message="toast.message" />
     </div>
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
 import { AVAILABLE_BANNERS } from "@/lib/banners";
 import { AVAILABLE_GROUPS } from "@/lib/groups";
 import { onBeforeRouteLeave } from 'vue-router';
+import { useVuelidate } from '@vuelidate/core';
+import { required, minLength } from '@vuelidate/validators';
+import ValidationMessage from "@/components/ValidationMessage.vue";
+import Toast from "@/components/ToastComponent.vue";
 
-const data = ref({
+const toast = ref({
+    show: false,
+    message: '',
+})
+
+const initialData = {
     banner: '',
     title: '',
     group: '',
     newGroup: '',
     content: '',
     favorite: false,
-})
+}
+const data = ref({ ...initialData })
+
+const rules = computed(() => ({
+    banner: { required },
+    title: { required, minLength: minLength(4) },
+    content: { required },
+}))
+
+const $v = useVuelidate(rules, data);
 
 const enableNewGroupInput = ref(false);
 const isGroupOptionOpen = ref(false);
@@ -125,7 +150,7 @@ onBeforeRouteLeave((to, from, next) => {
         data.value.title ||
         data.value.group ||
         data.value.newGroup ||
-        data.value.content || 
+        data.value.content ||
         data.value.favorite) {
 
         const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
@@ -203,8 +228,41 @@ onBeforeUnmount(() => {
 });
 
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
     console.log('submitting...', data.value);
+    const isFormCorrect = await $v.value.$validate()
+    if (!isFormCorrect) return;
+
+    const validatedData = {
+        banner: data.value.banner,
+        title: data.value.title,
+        group: data.value.group || data.value.newGroup,
+        content: data.value.content,
+        favoite: data.value.favorite,
+        date: new Date().toLocaleDateString()
+    }
+
+    const currentNotes = localStorage.getItem('notes', null);
+    if (!currentNotes) {
+        localStorage.setItem('notes', JSON.stringify([validatedData]));
+    } else {
+        const current = JSON.parse(currentNotes);
+        current.push(validatedData);
+        localStorage.setItem('notes', JSON.stringify(current));
+    }
+
+    data.value = { ...initialData }
+    toast.value.show = true;
+    toast.value.message = 'Notes added successfully!';
+
+    setTimeout(() => {
+        toast.value.show = false;
+        toast.value.message = '';
+    }, 1500)
+
+    nextTick(() => {
+        $v.value.$reset()
+    })
 }
 
 
