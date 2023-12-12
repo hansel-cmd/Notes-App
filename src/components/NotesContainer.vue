@@ -17,7 +17,8 @@
                         </button>
                     </router-link>
 
-                    <button class="py-1 hover:bg-gray-100 hover:text-gray-900 w-full text-start">
+                    <button @click="handleDelete(combinedNote.id)"
+                        class="py-1 hover:bg-gray-100 hover:text-gray-900 w-full text-start">
                         <a class="block px-4 py-2 text-sm text-gray-700 ">
                             <i class="bi bi-trash3-fill me-3"></i>Delete Note</a>
                     </button>
@@ -39,7 +40,7 @@
             <h1 class="text-3xl mb-3 font-semibold">{{ combinedNote.title }}</h1>
             <p>{{ combinedNote.content }}</p>
         </div>
-        
+
     </div>
 </template>
 
@@ -48,7 +49,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { AVAILABLE_BANNERS } from '@/lib/banners';
 
 const { note } = defineProps(['note'])
-const emit = defineEmits(['handleFavorite'])
+const emit = defineEmits(['handleFavorite', 'handleDelete'])
 
 const mapNoteBanner = () => {
     const banner = AVAILABLE_BANNERS.value.find(banner => banner.name === note.banner)
@@ -58,7 +59,7 @@ const mapNoteBanner = () => {
     return note;
 }
 
-const combinedNote = ref({...mapNoteBanner()})
+const combinedNote = ref({ ...mapNoteBanner() })
 
 const isOpen = ref(false);
 const dropdownRef = ref(null);
@@ -91,6 +92,10 @@ const handleFavorite = (id) => {
 
     // let parent know something changed
     emit('handleFavorite', id);
+}
+
+const handleDelete = (id) => {
+    emit('handleDelete', id);
 }
 
 </script>
