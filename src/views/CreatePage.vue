@@ -1,7 +1,6 @@
 <template>
     <div class="">
         <div class="w-100 px-10">
-            haha {{ notesStore.newNote.banner }}
             <form @submit.prevent="handleSubmit">
                 <div class="flex flex-col my-4">
                     <label class="mb-2">Notes Banner *</label>

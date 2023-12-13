@@ -1,7 +1,7 @@
 <template>
     <div v-if="showSearchBox" class="border-b-[1px] p-2 h-[64px] relative">
         <div className="flex items-center border-[1px] px-2 py-2 grow">
-            <input v-model="test" type="text" @keyup.enter="handleSearch"
+            <input v-model="query" type="text" @keyup.enter="handleSearch"
                 className="w-full ms-2 bg-transparent focus:outline-none dark:text-white border-0 border-transparent focus:ring-0" />
             <div className="me-2 outline-none">
                 <span title="Search">
@@ -18,7 +18,7 @@ import { EDIT, CREATE } from '@/router/routes';
 import { computed, ref } from 'vue';
 
 const emit = defineEmits(['handleSearch'])
-const test = ref('')
+const query = ref('')
 
 const route = useRoute();
 

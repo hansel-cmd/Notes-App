@@ -93,6 +93,16 @@ export const useNotesStore = defineStore(STORE_NOTES, () => {
     localStorage.setItem("notes", JSON.stringify(updatedNotes));
   };
 
+  const mapNotesGroups = (base = null) => {
+    const x = (base || notes.value).reduce((accumulate, current) => {
+        const groupName = current.group;
+        accumulate[groupName] = accumulate[groupName] || [];
+        accumulate[groupName].push(current);
+        return accumulate;
+    }, {});
+    return x;
+}
+
   return {
     initialData,
     currentNote,
@@ -105,5 +115,6 @@ export const useNotesStore = defineStore(STORE_NOTES, () => {
     searchNotes,
     handleFavorite,
     handleDelete,
+    mapNotesGroups
   };
 });
