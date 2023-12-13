@@ -18,45 +18,21 @@ import Toast from "@/components/ToastComponent.vue";
 import NothingHere from '@/components/NothingHere.vue';
 import { toast, resetToast } from "@/lib/toast";
 import { watch, ref } from 'vue';
+import { useNotesStore } from '@/stores/notes';
 
 const props = defineProps(['qs']);
+const notesStore = useNotesStore();
 
-watch(props, () => favoriteNotes.value = getNotes());
+watch(props, () => favoriteNotes.value = notesStore.searchNotes(props.qs, true))
 
-const getNotes = () => {
-    const n = (JSON.parse(localStorage.getItem('notes')) || []).filter(note => note.favorite);
-    return n.filter(note => {
-        return note.title.toLowerCase().includes(props.qs.toLowerCase()) ||
-            note.content.toLowerCase().includes(props.qs.toLowerCase()) ||
-            note.group.toLowerCase().includes(props.qs.toLowerCase())
-    });
-}
-
-const favoriteNotes = ref(getNotes())
+const favoriteNotes =  ref(notesStore.searchNotes(props.qs, true));
 
 
 const handleFavorite = (id) => {
-
-    const allNotes = JSON.parse(localStorage.getItem('notes')) || [];
-    const updatedAllNotes = allNotes.map(note => {
-        if (note.id === id) {
-            if (note.favorite)
-                toast.value.message = 'Removed from favorites!';
-            else
-                toast.value.message = 'Marked as favorite!';
-
-            return {
-                ...note,
-                favorite: !note.favorite
-            }
-        }
-        return note;
-    })
-    
-    localStorage.setItem('notes', JSON.stringify(updatedAllNotes));
-    favoriteNotes.value = getNotes();
-
+    const msg = notesStore.handleFavorite(id);
+    favoriteNotes.value = notesStore.searchNotes(props.qs, true);
     toast.value.show = true;
+    toast.value.message = msg;
     resetToast();
 }
 
@@ -65,13 +41,8 @@ const handleDelete = (id) => {
     const confirm = window.confirm(msg);
     if (!confirm) return;
 
-    const allNotes = JSON.parse(localStorage.getItem('notes'));
-    const updatedNotes = allNotes.filter(note => note.id !== id);
-
-    localStorage.setItem('notes', JSON.stringify(updatedNotes));
-
-    const updatedFilteredNotes = updatedNotes.filter(note => note.favorite === true);
-    favoriteNotes.value = [...updatedFilteredNotes];
+    notesStore.handleDelete(id);
+    favoriteNotes.value = notesStore.searchNotes(props.qs, true);
 
     toast.value.show = true;
     toast.value.message = 'Deleted Successfully!';

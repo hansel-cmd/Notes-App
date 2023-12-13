@@ -17,44 +17,20 @@ import Toast from "@/components/ToastComponent.vue";
 import NothingHere from '@/components/NothingHere.vue';
 import { toast, resetToast } from "@/lib/toast";
 import { ref, watch } from 'vue';
+import { useNotesStore } from '@/stores/notes';
 
 const props = defineProps(['qs']);
+const notesStore = useNotesStore();
 
-watch(props, () => notes.value = getNotes())
+watch(props, () => notes.value = notesStore.searchNotes(props.qs))
 
-const getNotes = () => {
-    const n = JSON.parse(localStorage.getItem('notes')) || [];
-    return n.filter(note => {
-        return note.title.toLowerCase().includes(props.qs.toLowerCase()) ||
-            note.content.toLowerCase().includes(props.qs.toLowerCase()) ||
-            note.group.toLowerCase().includes(props.qs.toLowerCase())
-    });
-}
-
-const notes = ref(getNotes());
+const notes = ref(notesStore.searchNotes(props.qs));
 
 const handleFavorite = (id) => {
-    
-    const allNotes = JSON.parse(localStorage.getItem('notes')) || [];
-    const updatedAllNotes = allNotes.map(note => {
-        if (note.id === id) {
-            if (note.favorite)
-                toast.value.message = 'Removed from favorites!';
-            else
-                toast.value.message = 'Marked as favorite!';
-
-            return {
-                ...note,
-                favorite: !note.favorite
-            }
-        }
-        return note;
-    })
-
-    localStorage.setItem('notes', JSON.stringify(updatedAllNotes));
-    notes.value = getNotes();
-
+    const msg = notesStore.handleFavorite(id);
+    notes.value = notesStore.searchNotes(props.qs);
     toast.value.show = true;
+    toast.value.message = msg;
     resetToast();
 }
 
@@ -63,9 +39,8 @@ const handleDelete = (id) => {
     const confirm = window.confirm(msg);
     if (!confirm) return;
 
-    const updatedNotes = notes.value.filter(note => note.id !== id);
-    notes.value = [...updatedNotes];
-    localStorage.setItem('notes', JSON.stringify(updatedNotes));
+    notesStore.handleDelete(id);
+    notes.value = notesStore.searchNotes(props.qs);
 
     toast.value.show = true;
     toast.value.message = 'Deleted Successfully!';
