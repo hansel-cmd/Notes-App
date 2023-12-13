@@ -10,7 +10,7 @@
                         More
                     </div>
                 </slot>
-                <slot name="header-chevron">
+                <slot name="header">
                     <span :class="{ 'rotate-180': isOpen, 'transition transform': true }">
                         <i class="bi bi-chevron-up"></i>
                     </span>
@@ -31,6 +31,5 @@ let isOpen = ref(false)
 const toggleCollapsible = () => {
     isOpen.value = !isOpen.value;
 }
-
 
 </script>

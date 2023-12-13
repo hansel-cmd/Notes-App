@@ -17,10 +17,10 @@ import { useRoute } from 'vue-router';
 import { EDIT, CREATE, DETAILS } from '@/router/routes';
 import { computed, ref } from 'vue';
 
-const emit = defineEmits(['handleSearch'])
-const query = ref('')
-
 const route = useRoute();
+const query = ref('')
+const emit = defineEmits(['handleSearch'])
+
 
 const showSearchBox = computed(() => {
     const regex = new RegExp(`^${EDIT.replace('/:id', '/\\d+')}$`);

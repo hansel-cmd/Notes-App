@@ -48,14 +48,11 @@ import Collapsible from "@/components/CollapsibleMenuLink.vue"
 import * as routes from "@/router/routes"
 import { useRoute } from "vue-router";
 
+const router = useRoute();
 const emit = defineEmits(['showSideNav'])
 
 const showSideNav = () => {
     emit('showSideNav')
 }
 
-const router = useRoute();
-
 </script>
-
-<style></style>

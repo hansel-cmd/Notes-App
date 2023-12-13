@@ -52,7 +52,8 @@
 
                             <div v-if="isGroupOptionOpen"
                                 class="origin-top-right absolute mt-2 w-full shadow-lg bg-black border border-gray-100 ring-white ring-opacity-5">
-                                <button @click="handleSelectGroup(group.name)" v-for="group in groupsStore.groups" :key="group.id"
+                                <button @click="handleSelectGroup(group.name)" v-for="group in groupsStore.groups"
+                                    :key="group.id"
                                     class="flex justify-between items-center py-1 hover:bg-gray-800 hover:text-gray-900 w-full text-start">
                                     <a href="#" class="block px-4 py-2 text-sm text-white">
                                         {{ group.name }}
@@ -106,108 +107,32 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick } from 'vue';
 import { AVAILABLE_BANNERS } from "@/lib/banners";
-import { onBeforeRouteLeave } from 'vue-router';
-import { useVuelidate } from '@vuelidate/core';
-import { required, minLength } from '@vuelidate/validators';
 import ValidationMessage from "@/components/ValidationMessage.vue";
 import Toast from "@/components/ToastComponent.vue";
+import { toast, resetToast } from "@/lib/toast";
 import { useNotesStore } from '@/stores/notes';
 import { useGroupsStore } from "@/stores/groups";
+import { useCreateEditToggle } from "@/common/createEditToggle";
+import { usePreventNavigation } from "@/common/preventNavigation";
+import { useFormValidation } from "@/validation/useFormValidation";
 
 const notesStore = useNotesStore();
 const groupsStore = useGroupsStore();
+const { $v } = useFormValidation(notesStore.newNote);
 
-const toast = ref({
-    show: false,
-    message: '',
-})
+usePreventNavigation($v);
 
-const rules = computed(() => ({
-    banner: { required },
-    title: { required, minLength: minLength(4) },
-    content: { required },
-}))
-
-const $v = useVuelidate(rules, notesStore.newNote);
-
-const enableNewGroupInput = ref(false);
-const isGroupOptionOpen = ref(false);
-const isBannerOptionOpen = ref(false);
-const dropdownRef = ref(null);
-
-onBeforeRouteLeave((to, from, next) => {
-    if ($v.value.$anyDirty) {
-        const x = window.confirm('Unsaved changes may not be saved. Do you want to leave page?');
-        if (x) return next();
-        else return;
-    }
-    return next();
-})
-
-const preventNav = (event) => {
-    if ($v.value.$anyDirty) {
-        event.preventDefault();
-        event.returnValue = '';
-    }
-};
-
-const toggleDropdown = (_ref = 'select', value) => {
-    if (_ref === 'groupNotes') {
-        isGroupOptionOpen.value = !isGroupOptionOpen.value
-    }
-    else if (_ref === 'banner') {
-        isBannerOptionOpen.value = !isBannerOptionOpen.value
-    }
-    dropdownRef.value = value
-}
-
-const handleSelectNewGroup = () => {
-    enableNewGroupInput.value = true;
-    notesStore.newNote.group = '';
-    setTimeout(() => {
-        document.querySelector('#newGroup').focus();
-    }, 0);
-}
-
-const handleSelectGroup = (value) => {
-    notesStore.newNote.group = value;
-
-    // reset the other
-    notesStore.newNote.newGroup = '';
-    enableNewGroupInput.value = false;
-}
-
-const handleSelectBanner = (value) => {
-    notesStore.newNote.banner = value;
-}
-
-const closeDropdownOnOutsideClick = (event) => {
-    if ((isBannerOptionOpen.value || isGroupOptionOpen.value) &&
-        dropdownRef.value !== event.target.id) {
-        isGroupOptionOpen.value = false;
-        isBannerOptionOpen.value = false;
-        dropdownRef.value = null;
-    }
-};
-
-onMounted(() => {
-    document.addEventListener('click', closeDropdownOnOutsideClick);
-});
-
-onUnmounted(() => {
-    document.removeEventListener('click', closeDropdownOnOutsideClick);
-});
-
-onBeforeMount(() => {
-    window.addEventListener('beforeunload', preventNav);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('beforeunload', preventNav);
-});
-
+const {
+    enableNewGroupInput,
+    isGroupOptionOpen,
+    isBannerOptionOpen,
+    toggleDropdown,
+    handleSelectNewGroup,
+    handleSelectGroup,
+    handleSelectBanner,
+} = useCreateEditToggle(notesStore.newNote);
 
 const handleSubmit = async () => {
 
@@ -224,6 +149,7 @@ const handleSubmit = async () => {
     }
 
     if (notesStore.newNote.newGroup !== '') {
+        console.log('i am creating a newe group', notesStore.newNote.newGroup)
         groupsStore.addGroup({ name: notesStore.newNote.newGroup });
     }
 
@@ -233,15 +159,10 @@ const handleSubmit = async () => {
     toast.value.show = true;
     toast.value.message = 'Notes added successfully!';
 
-    setTimeout(() => {
-        toast.value.show = false;
-        toast.value.message = '';
-    }, 1500)
-
+    resetToast();
     nextTick(() => {
         $v.value.$reset()
     })
 }
-
 
 </script>
