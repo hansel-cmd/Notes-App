@@ -60,10 +60,14 @@ const router = createRouter({
       },
     },
     {
-      path: "/details/:id",
+      path: routes.DETAILS,
       name: "details",
       component: () => import("../views/DetailPage.vue"),
       beforeEnter(to, from, next) {
+        const param = Number(to.params?.id);
+        if (isNaN(param)) {
+          return next({ name: "not-found" });
+        }
         document.title = "My Notes App | Note Details";
         return next();
       },

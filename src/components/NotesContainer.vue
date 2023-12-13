@@ -37,7 +37,9 @@
             </span>
         </div>
         <div class="py-2 px-10 h-[80px] overflow-clip">
-            <h1 class="text-3xl mb-3 font-semibold">{{ combinedNote.title }}</h1>
+            <router-link :to="{ name: 'details', params: { id: combinedNote.id } }">
+                <h1 class="text-3xl mb-3 font-semibold">{{ combinedNote.title }}</h1>
+            </router-link>
             <p>{{ combinedNote.content }}</p>
         </div>
 

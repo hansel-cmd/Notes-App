@@ -5,6 +5,7 @@ export const SETTINGS = "/settings";
 export const FAVORITES = "/favorites";
 export const GROUPS = "/groups";
 export const TRASH = "/trash";
+export const DETAILS = "/details/:id";
 
 export const PRIMARY_LINKS = [
   {

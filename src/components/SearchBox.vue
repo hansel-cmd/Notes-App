@@ -14,7 +14,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import { EDIT, CREATE } from '@/router/routes';
+import { EDIT, CREATE, DETAILS } from '@/router/routes';
 import { computed, ref } from 'vue';
 
 const emit = defineEmits(['handleSearch'])
@@ -24,7 +24,8 @@ const route = useRoute();
 
 const showSearchBox = computed(() => {
     const regex = new RegExp(`^${EDIT.replace('/:id', '/\\d+')}$`);
-    return route.path !== CREATE && !regex.test(route.path);
+    const regexDetails = new RegExp(`^${DETAILS.replace('/:id', '/\\d+')}$`);
+    return route.path !== CREATE && !regex.test(route.path) &&  !regexDetails.test(route.path);
 })
 
 const handleSearch = (e) => {
