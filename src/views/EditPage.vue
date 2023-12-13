@@ -7,7 +7,7 @@
                     <div class="relative inline-block text-left z-10" @click="$v.banner.$touch">
                         <span id="banner" @click="toggleDropdown('banner', 'banner')" type="button"
                             class="flex items-center justify-between border-[1px] bg-transparent rounded p-2 w-full h-full cursor-pointer">
-                            {{ data.banner || 'Select Notes Banner' }}
+                            {{ notesStore.currentNote.banner || 'Select Notes Banner' }}
                             <span :class="{ 'rotate-180': isBannerOptionOpen, 'transition transform': true }">
                                 <i id="banner" class="bi bi-chevron-up"></i>
                             </span>
@@ -22,7 +22,7 @@
                                     <i :class="['bi bi-circle-fill ms-4 me-2', banner.textValue]"></i>
                                     {{ banner.name }}
                                 </a>
-                                <span v-if="data.banner === banner.name" class="text-white">
+                                <span v-if="notesStore.currentNote.banner === banner.name" class="text-white">
                                     <i class="bi bi-check-lg text-lg me-4"></i>
                                 </span>
                             </button>
@@ -32,8 +32,8 @@
                 </div>
                 <div class="flex flex-col my-4">
                     <label for="title" class="mb-2">Notes Title *</label>
-                    <input id="title" v-model="data.title" @blur="$v.title.$touch" name="title" type="text"
-                        class="p-2 border-[1px] bg-transparent rounded">
+                    <input id="title" v-model="notesStore.currentNote.title" @blur="$v.title.$touch" name="title"
+                        type="text" class="p-2 border-[1px] bg-transparent rounded">
                     <ValidationMessage :model="$v.title"></ValidationMessage>
                 </div>
 
@@ -44,7 +44,7 @@
                             <span id="groupNotes" @click="toggleDropdown('groupNotes', 'groupNotes')" type="button"
                                 class="flex items-center justify-between border-[1px] bg-transparent rounded p-2 w-full h-full cursor-pointer">
 
-                                {{ data.group || 'Select Notes Group' }}
+                                {{ notesStore.currentNote.group || 'Select Notes Group' }}
                                 <span :class="{ 'rotate-180': isGroupOptionOpen, 'transition transform': true }">
                                     <i id="groupNotes" class="bi bi-chevron-up"></i>
                                 </span>
@@ -52,13 +52,13 @@
 
                             <div v-if="isGroupOptionOpen"
                                 class="origin-top-right absolute mt-2 w-full shadow-lg bg-black border border-gray-100 ring-white ring-opacity-5">
-                                <button @click="handleSelectGroup(group.name)" v-for="group in groups"
+                                <button @click="handleSelectGroup(group.name)" v-for="group in groupsStore.groups"
                                     :key="group.id"
                                     class="flex justify-between items-center py-1 hover:bg-gray-800 hover:text-gray-900 w-full text-start">
                                     <a href="#" class="block px-4 py-2 text-sm text-white">
                                         {{ group.name }}
                                     </a>
-                                    <span v-if="data.group === group.name" class="text-white">
+                                    <span v-if="notesStore.currentNote.group === group.name" class="text-white">
                                         <i class="bi bi-check-lg text-lg me-4"></i>
                                     </span>
                                 </button>
@@ -75,7 +75,7 @@
 
                     <div class="flex flex-col my-4 flex-grow">
                         <label for="newGroup" class="mb-2">Create a New Group</label>
-                        <input id="newGroup" v-model="data.newGroup" name="newGroup" type="text"
+                        <input id="newGroup" v-model="notesStore.currentNote.newGroup" name="newGroup" type="text"
                             placeholder="Enter new group name"
                             class="p-2 border-[1px] bg-transparent rounded disabled:bg-gray-700 disabled:cursor-not-allowed"
                             :disabled="!enableNewGroupInput">
@@ -84,13 +84,13 @@
 
                 <div class="flex flex-col my-4">
                     <label for="content" class="mb-2">Notes Content *</label>
-                    <textarea v-model="data.content" @blur="$v.content.$touch" name="content" id="content"
+                    <textarea v-model="notesStore.currentNote.content" @blur="$v.content.$touch" name="content" id="content"
                         class="p-3 border-[1px] bg-transparent rounded min-h-[250px]"></textarea>
                     <ValidationMessage :model="$v.content"></ValidationMessage>
                 </div>
 
                 <div class="my-4">
-                    <input id="favorite" v-model="data.favorite" type="checkbox">
+                    <input id="favorite" v-model="notesStore.currentNote.favorite" type="checkbox">
                     <label for="favorite" class="ms-4">Mark as Favorite</label>
                 </div>
 
@@ -114,18 +114,13 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength } from '@vuelidate/validators';
 import ValidationMessage from "@/components/ValidationMessage.vue";
 import Toast from "@/components/ToastComponent.vue";
-import { useRoute } from "vue-router";
 import { toast, resetToast } from "@/lib/toast";
+import { useNotesStore } from '@/stores/notes';
+import { useGroupsStore } from "@/stores/groups";
 
-const route = useRoute();
-
-const initialGroups = JSON.parse(localStorage.getItem('groups')) || [];
-const groups = ref([...initialGroups]);
-
-const allNotes = JSON.parse(localStorage.getItem('notes', []))
-const initialData = ref(allNotes.find(
-    note => note.id === Number(route.params?.id)) || null)
-const data = ref({ ...initialData.value, newGroup: '' });
+const notesStore = useNotesStore();
+notesStore.getNote();
+const groupsStore = useGroupsStore();
 
 const rules = computed(() => ({
     banner: { required },
@@ -133,7 +128,7 @@ const rules = computed(() => ({
     content: { required },
 }));
 
-const $v = useVuelidate(rules, data);
+const $v = useVuelidate(rules, notesStore.currentNote);
 
 
 const enableNewGroupInput = ref(false);
@@ -153,22 +148,22 @@ const toggleDropdown = (_ref = 'select', value) => {
 
 const handleSelectNewGroup = () => {
     enableNewGroupInput.value = true;
-    data.value.group = '';
+    notesStore.currentNote.group = '';
     setTimeout(() => {
         document.querySelector('#newGroup').focus();
     }, 0);
 }
 
 const handleSelectGroup = (value) => {
-    data.value.group = value;
+    notesStore.currentNote.group = value;
 
     // reset the other
-    data.value.newGroup = '';
+    notesStore.currentNote.newGroup = '';
     enableNewGroupInput.value = false;
 }
 
 const handleSelectBanner = (value) => {
-    data.value.banner = value;
+    notesStore.currentNote.banner = value;
 }
 
 const closeDropdownOnOutsideClick = (event) => {
@@ -218,43 +213,22 @@ const handleSubmit = async () => {
     if (!isFormCorrect) return;
 
     const validatedData = {
-        id: data.value.id,
-        banner: data.value.banner,
-        title: data.value.title,
-        group: data.value.group || data.value.newGroup,
-        content: data.value.content,
-        favorite: data.value.favorite,
+        id: notesStore.currentNote.id,
+        banner: notesStore.currentNote.banner,
+        title: notesStore.currentNote.title,
+        group: notesStore.currentNote.group || notesStore.currentNote.newGroup,
+        content: notesStore.currentNote.content,
+        favorite: notesStore.currentNote.favorite,
         date: new Date().toLocaleDateString()
     }
 
-    if (data.value.newGroup !== '') {
-        let gs = localStorage.getItem('groups');
-
-        // first group data
-        if (!gs) {
-            let newGroups = [{ id: 1, name: data.value.newGroup }];
-            localStorage.setItem('groups', JSON.stringify(newGroups))
-            groups.value = [...newGroups];
-        } else {
-
-            gs = JSON.parse(localStorage.getItem('groups'))
-            const maxId = gs.length > 0
-                ? Math.max(...gs.map(group => group.id)) + 1
-                : 1;
-
-            let newGroups = [...gs, { id: maxId, name: data.value.newGroup }];
-            localStorage.setItem('groups',
-                JSON.stringify([...newGroups]))
-
-            groups.value = [...newGroups];
-        }
+    if (notesStore.currentNote.newGroup !== '') {
+        groupsStore.addGroup({ name: notesStore.currentNote.newGroup });
     }
 
-    const updatedNotes = allNotes.map(
-        note => note.id === validatedData.id ? validatedData : note
-    )
+    notesStore.updateNote(validatedData);
 
-    localStorage.setItem('notes', JSON.stringify(updatedNotes));
+    enableNewGroupInput.value = false;
     toast.value.show = true;
     toast.value.message = 'Updated Successfully!';
     resetToast();
