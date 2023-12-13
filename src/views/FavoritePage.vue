@@ -22,11 +22,9 @@ import { useNotesStore } from '@/stores/notes';
 
 const props = defineProps(['qs']);
 const notesStore = useNotesStore();
-
-watch(props, () => favoriteNotes.value = notesStore.searchNotes(props.qs, true))
-
 const favoriteNotes =  ref(notesStore.searchNotes(props.qs, true));
 
+watch(props, () => favoriteNotes.value = notesStore.searchNotes(props.qs, true))
 
 const handleFavorite = (id) => {
     const msg = notesStore.handleFavorite(id);

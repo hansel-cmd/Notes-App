@@ -27,8 +27,10 @@ watch(props, () => notes.value = notesStore.searchNotes(props.qs))
 const notes = ref(notesStore.searchNotes(props.qs));
 
 const handleFavorite = (id) => {
+
     const msg = notesStore.handleFavorite(id);
     notes.value = notesStore.searchNotes(props.qs);
+
     toast.value.show = true;
     toast.value.message = msg;
     resetToast();

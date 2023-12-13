@@ -57,14 +57,17 @@ import { AVAILABLE_BANNERS } from '@/lib/banners';
 import { useNotesStore } from '@/stores/notes';
 import Toast from "@/components/ToastComponent.vue";
 import { toast, resetToast } from "@/lib/toast";
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useNoteContainerToggle } from '@/common/noteContainerToggle';
 
+const {
+    isOpen,
+    toggleDropdown,
+} = useNoteContainerToggle();
 const router = useRouter();
 const notesStore = useNotesStore();
 notesStore.getNote();
-
-watch(() => notesStore, () => { })
 
 const mapNoteBanner = () => {
     const banner = AVAILABLE_BANNERS.value.find(banner => banner.name === notesStore.currentNote.banner)
@@ -103,29 +106,4 @@ const handleFavorite = (id) => {
     toast.value.message = msg;
     resetToast();
 }
-
-const isOpen = ref(false);
-const dropdownRef = ref(null);
-
-const toggleDropdown = (id) => {
-    isOpen.value = !isOpen.value;
-    dropdownRef.value = id
-};
-
-const closeDropdownOnOutsideClick = (event) => {
-    if (isOpen.value &&
-        dropdownRef.value !== event.target.id) {
-        isOpen.value = false;
-        dropdownRef.value = null;
-    }
-};
-
-onMounted(() => {
-    document.addEventListener('click', closeDropdownOnOutsideClick);
-});
-
-onUnmounted(() => {
-    document.removeEventListener('click', closeDropdownOnOutsideClick);
-});
-
 </script>

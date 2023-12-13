@@ -148,7 +148,7 @@ const handleSubmit = async () => {
         date: new Date().toLocaleDateString()
     }
 
-    if (notesStore.newNote.newGroup !== '') {
+    if (notesStore.newNote.newGroup && notesStore.newNote.newGroup !== '') {
         console.log('i am creating a newe group', notesStore.newNote.newGroup)
         groupsStore.addGroup({ name: notesStore.newNote.newGroup });
     }

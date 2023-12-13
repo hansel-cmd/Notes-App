@@ -47,11 +47,16 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { ref } from 'vue';
 import { AVAILABLE_BANNERS } from '@/lib/banners';
+import { useNoteContainerToggle } from "@/common/noteContainerToggle";
 
-const { note } = defineProps(['note'])
-const emit = defineEmits(['handleFavorite', 'handleDelete'])
+const {
+    isOpen,
+    toggleDropdown,
+} = useNoteContainerToggle();
+const { note } = defineProps(['note']);
+const emit = defineEmits(['handleFavorite', 'handleDelete']);
 
 const mapNoteBanner = () => {
     const banner = AVAILABLE_BANNERS.value.find(banner => banner.name === note.banner)
@@ -60,32 +65,7 @@ const mapNoteBanner = () => {
     }
     return note;
 }
-
-const combinedNote = ref({ ...mapNoteBanner() })
-
-const isOpen = ref(false);
-const dropdownRef = ref(null);
-
-const toggleDropdown = (id) => {
-    isOpen.value = !isOpen.value;
-    dropdownRef.value = id
-};
-
-const closeDropdownOnOutsideClick = (event) => {
-    if (isOpen.value &&
-        dropdownRef.value !== event.target.id) {
-        isOpen.value = false;
-        dropdownRef.value = null;
-    }
-};
-
-onMounted(() => {
-    document.addEventListener('click', closeDropdownOnOutsideClick);
-});
-
-onUnmounted(() => {
-    document.removeEventListener('click', closeDropdownOnOutsideClick);
-});
+const combinedNote = ref({ ...mapNoteBanner() });
 
 const handleFavorite = (id) => {
 

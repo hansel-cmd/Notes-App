@@ -10,7 +10,7 @@
                         More
                     </div>
                 </slot>
-                <slot name="header">
+                <slot name="header-chevron">
                     <span :class="{ 'rotate-180': isOpen, 'transition transform': true }">
                         <i class="bi bi-chevron-up"></i>
                     </span>
